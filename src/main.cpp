@@ -14,15 +14,14 @@
  * Modo AP (Access Point)
  * O ESP32 cria a própria rede Wi-Fi para que o usuário configure as
  * credenciais da rede existente. IP padrão do WiFi.softAP(): 192.168.4.1
- * (mesmo valor usado no memorial descritivo e nos slides da disciplina).
  * ---------------------------------------------------------------------- */
-const char* ssidAP = "ESP32_Embarcados";
+const char* ssidAP = "ssid";
 const char* senhaAP = "12345678";
 
 /* ------------------------------------------------------------------------
  * Pinos utilizados
  * ---------------------------------------------------------------------- */
-#define PINO_RELE 2          // mesmo pino "led" do projeto original -> agora controla o relé
+#define PINO_RELE 2          // mesmo pino "led" do projeto original -> agora controla o relé               
 #define PINO_VENTILADOR 26   // aciona o ventilador (via relé/transistor)
 #define DHTPIN 4              // dado do DHT22 (comunicação one-wire)
 #define DHTTYPE DHT22
