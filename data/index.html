@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html> 
+<head> 
+    <title>ESP32 Web Server</title> 
+    <link rel="stylesheet" type="text/css" href="novo_estilo.css">
+    <!--refresh automático a cada 5 segundos-->
+    <meta http-equiv="refresh" content="5">
+    <!--A largura da página é a largura real da tela do celular.-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head> 
+<body> 
+    <h1>ESP32 Servidor Web</h1> 
+
+    <p><a href="/on"><button class="button button1">ON</button></a> 
+    <a href="/off"><button class="button button2">OFF</button></a> </p> 
+
+    <p class="sensor-labels">Temperatura: <b> %TEMP% </b><sup class="units">&deg;</sup>C</p> 
+    <p class="sensor-labels">Umidade:<b> %UMID% </b>&#37;</p> 
+</body> 
+</html>

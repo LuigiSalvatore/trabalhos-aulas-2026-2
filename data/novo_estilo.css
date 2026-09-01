@@ -1,0 +1,32 @@
+html {
+    font-family: Arial;
+    text-align: center;
+}
+
+h1 {
+    color: #0F3376;
+    padding: 10px;
+}
+
+p {
+    font-size: 1.5rem;    /* relativo ao tamanho da fonte */
+}
+
+.button {
+    width: 200px;         /* fixar largura do botão */
+    border-radius: 4px;   /* fazer a borda arredondada */
+    border: none;         /* sem cor de borda */
+    color: white;       /* cor da letra */
+    font-size: 30px;      /* cor da letra */
+
+    padding: 16px;
+    margin: 5px;          /* distância entre os botões */
+}
+
+.button1 {
+    background-color: #008CBA;
+}
+
+.button2 {
+    background-color: #f44336;
+}
