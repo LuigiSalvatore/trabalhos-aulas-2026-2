@@ -44,6 +44,7 @@ int32_t g_pressao = 0;      // Pa
 float g_altitude = 0.0;     // m
 bool g_ventiladorLigado = false;
 bool g_releLigado = false;
+bool g_bmpConectado = false;
 
 const float TEMPERATURA_LIGA_VENTILADOR = 25.0;
 const unsigned long INTERVALO_LEITURA_MS = 2000;
@@ -61,8 +62,13 @@ void lerSensores() {
   if (!isnan(t)) g_temperatura = t;
   if (!isnan(h)) g_umidade = h;
 
-  g_pressao = bmp.readPressure();
-  g_altitude = bmp.readAltitude();
+  if (g_bmpConectado) {
+    g_pressao = bmp.readPressure();
+    g_altitude = bmp.readAltitude();
+  } else {
+    g_pressao = random(95000, 105000); // Pa
+    g_altitude = random(0, 500);       // metros
+  }
 }
 
 void controlaVentilador() {
@@ -197,9 +203,13 @@ void setup() {
 
   dht.begin();
 
-  Wire.begin(); // SDA = GPIO21, SCL = GPIO22 (padrão do ESP32)
-  if (!bmp.begin()) {
-    Serial.println("Sensor BMP085 nao encontrado. Verifique a fiacao (I2C).");
+  Wire.begin(); 
+  
+  g_bmpConectado = bmp.begin();
+  if (!g_bmpConectado) {
+    Serial.println("Sensor BMP085 nao encontrado. Entrando em modo de simulacao.");
+  } else {
+    Serial.println("Sensor BMP085 conectado com sucesso!");
   }
 
   if (!SPIFFS.begin(true)) {
