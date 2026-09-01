@@ -3,24 +3,52 @@ html {
     text-align: center;
 }
 
+body {
+    background-color: #eef3f8;
+    margin: 0;
+}
+
+header {
+    background-color: #0F3376;
+    color: white;
+    padding: 15px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+footer {
+    background-color: #0F3376;
+    color: white;
+    padding: 10px;
+    margin-top: 25px;
+    font-size: 0.9rem;
+}
+
 h1 {
     color: #0F3376;
     padding: 10px;
 }
 
+h3 {
+    color: #0F3376;
+}
+
 p {
-    font-size: 1.5rem;    /* relativo ao tamanho da fonte */
+    font-size: 1.1rem;
 }
 
 .button {
-    width: 200px;         /* fixar largura do botão */
-    border-radius: 4px;   /* fazer a borda arredondada */
-    border: none;         /* sem cor de borda */
-    color: white;       /* cor da letra */
-    font-size: 30px;      /* cor da letra */
-
-    padding: 16px;
-    margin: 5px;          /* distância entre os botões */
+    width: 140px;
+    border-radius: 4px;
+    border: none;
+    color: white;
+    font-size: 16px;
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
 }
 
 .button1 {
@@ -29,4 +57,76 @@ p {
 
 .button2 {
     background-color: #f44336;
+}
+
+/* ---- Dashboard de sensores (index.html) ---- */
+
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px;
+}
+
+.card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    width: 150px;
+}
+
+.icon {
+    width: 56px;
+    height: 56px;
+}
+
+.sensor-labels {
+    font-size: 1rem;
+    margin: 5px 0 0 0;
+    color: #555;
+}
+
+.sensor-value {
+    font-size: 1.6rem;
+    margin: 5px 0;
+}
+
+.units {
+    font-size: 1rem;
+}
+
+.status-on {
+    color: #2e7d32;
+}
+
+.status-off {
+    color: #c62828;
+}
+
+/* ---- Formulário de configuração da rede (config.html) ---- */
+
+.config-form {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: #ffffff;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    margin-top: 10px;
+}
+
+.config-form label {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: #333;
+}
+
+.config-form input {
+    font-size: 1rem;
+    padding: 8px;
+    margin-top: 4px;
+    width: 250px;
 }

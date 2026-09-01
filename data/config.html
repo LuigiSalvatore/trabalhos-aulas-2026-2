@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>ESP32 - Configuracao Wi-Fi</title>
+    <link rel="stylesheet" type="text/css" href="novo_estilo.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <header>
+        <h1>Configuracao da Rede Wi-Fi</h1>
+    </header>
+
+    <main>
+        <p>O ESP32 esta em modo Access Point.<br>
+        Informe abaixo os dados da rede Wi-Fi (2,4 GHz) para conecta-lo.</p>
+
+        <form action="/save" method="POST" class="config-form">
+            <label for="ssid">Nome da rede (SSID)</label>
+            <input type="text" id="ssid" name="ssid" placeholder="Nome da rede Wi-Fi" required>
+
+            <label for="password">Senha da rede</label>
+            <input type="password" id="password" name="password" placeholder="Senha da rede Wi-Fi" required>
+
+            <br>
+            <button class="button button1" type="submit">Salvar</button>
+        </form>
+    </main>
+
+    <footer>
+        <p>Sistemas Embarcados - PUCRS - 2026/2</p>
+    </footer>
+</body>
+</html>
