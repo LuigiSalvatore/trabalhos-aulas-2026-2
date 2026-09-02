@@ -16,7 +16,7 @@
  * credenciais da rede existente. IP padrão do WiFi.softAP(): 192.168.4.1
  * ---------------------------------------------------------------------- */
 const char* ssidAP = "ssid";
-const char* senhaAP = "12345678";
+const char* senhaAP = "123456789";
 
 /* ------------------------------------------------------------------------
  * Pinos utilizados
@@ -47,7 +47,7 @@ bool g_releLigado = false;
 bool g_bmpConectado = false;
 
 const float TEMPERATURA_LIGA_VENTILADOR = 25.0;
-const unsigned long INTERVALO_LEITURA_MS = 2000;
+const unsigned long INTERVALO_LEITURA_MS = 200;
 unsigned long g_ultimaLeitura = 0;
 
 /* ------------------------------------------------------------------------
@@ -104,6 +104,7 @@ void registrarRotasSTA() {
 
   server.on("/rele_on", HTTP_GET, [](AsyncWebServerRequest *request) {
     g_releLigado = true;
+    Serial.println("liga relé");
     digitalWrite(PINO_RELE, HIGH);
     request->redirect("/");
   });
@@ -111,6 +112,7 @@ void registrarRotasSTA() {
   server.on("/rele_off", HTTP_GET, [](AsyncWebServerRequest *request) {
     g_releLigado = false;
     digitalWrite(PINO_RELE, LOW);
+    Serial.println("desliga relé");
     request->redirect("/");
   });
 }
