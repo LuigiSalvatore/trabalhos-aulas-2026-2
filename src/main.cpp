@@ -72,8 +72,19 @@ void lerSensores() {
 }
 
 void controlaVentilador() {
+
   g_ventiladorLigado = (g_temperatura > TEMPERATURA_LIGA_VENTILADOR);
-  digitalWrite(PINO_VENTILADOR, g_ventiladorLigado ? HIGH : LOW);
+    //Serial.println("Temp lida sensor g_temperatura: " + String(g_temperatura));
+  if (g_ventiladorLigado){
+    //Serial.println("liga ventilador");
+    digitalWrite(PINO_VENTILADOR, HIGH);
+  }
+  else{
+    digitalWrite(PINO_VENTILADOR, LOW);
+    //Serial.println("desliga ventilador");
+  }
+   // Serial.println("Sai func ventilador");
+  
 }
 
 /* ------------------------------------------------------------------------
@@ -118,6 +129,43 @@ void registrarRotasSTA() {
 }
 
 /* ------------------------------------------------------------------------
+ * Leitura manual do corpo do POST de "/save"
+ * A detecção automática de formulário (application/x-www-form-urlencoded)
+ * de algumas versões do ESPAsyncWebServer falha dependendo de como o
+ * navegador do celular monta o Content-Type, e request->hasParam(..., true)
+ * acaba nunca encontrando os campos. Para não depender só dessa detecção
+ * automática, lemos o corpo bruto da requisição nós mesmos.
+ * ---------------------------------------------------------------------- */
+String g_corpoSave;
+
+String extrairValorForm(const String &corpo, const String &chave) {
+  String busca = chave + "=";
+  int inicio = corpo.indexOf(busca);
+  if (inicio < 0) return "";
+  inicio += busca.length();
+  int fim = corpo.indexOf('&', inicio);
+  if (fim < 0) fim = corpo.length();
+  String bruto = corpo.substring(inicio, fim);
+
+  // decodifica application/x-www-form-urlencoded: '+' vira espaço, %XX vira o caractere
+  String valor;
+  valor.reserve(bruto.length());
+  for (unsigned int i = 0; i < bruto.length(); i++) {
+    char c = bruto[i];
+    if (c == '+') {
+      valor += ' ';
+    } else if (c == '%' && i + 2 < bruto.length()) {
+      char hex[3] = { bruto[i + 1], bruto[i + 2], 0 };
+      valor += (char) strtol(hex, NULL, 16);
+      i += 2;
+    } else {
+      valor += c;
+    }
+  }
+  return valor;
+}
+
+/* ------------------------------------------------------------------------
  * Modo AP: página de configuração da rede Wi-Fi (grava credenciais na NVS)
  * ---------------------------------------------------------------------- */
 void setupAP() {
@@ -135,28 +183,48 @@ void setupAP() {
     request->send(SPIFFS, "/config.html", "text/html");
   });
 
-  server.on("/save", HTTP_POST, [](AsyncWebServerRequest *request) {
-    if (request->hasParam("ssid", true) && request->hasParam("password", true)) {
-      String novoSSID = request->getParam("ssid", true)->value();
-      String novaSenha = request->getParam("password", true)->value();
+  server.on("/save", HTTP_POST,
+    [](AsyncWebServerRequest *request) {
+      // 1) tenta primeiro o corpo bruto que capturamos no onBody (mais confiável)
+      String novoSSID = extrairValorForm(g_corpoSave, "ssid");
+      String novaSenha = extrairValorForm(g_corpoSave, "password");
+      g_corpoSave = ""; // limpa para a próxima requisição
 
-      // Salva as credenciais na NVS (memória não volátil), como ensinado em aula.
-      preferencias.begin("wifi", false);
-      preferencias.putString("ssid", novoSSID);
-      preferencias.putString("password", novaSenha);
-      preferencias.end();
+      // 2) se por algum motivo o corpo não chegou no onBody, tenta o parser
+      //    automático da biblioteca como reforço
+      if (novoSSID.length() == 0 && request->hasParam("ssid", true)) {
+        novoSSID = request->getParam("ssid", true)->value();
+      }
+      if (novaSenha.length() == 0 && request->hasParam("password", true)) {
+        novaSenha = request->getParam("password", true)->value();
+      }
 
-      request->send(200, "text/html",
-        "<!DOCTYPE html><html><head><meta charset='UTF-8'>"
-        "<link rel='stylesheet' href='/novo_estilo.css'></head>"
-        "<body><h3>Configuracao salva! Reiniciando o ESP32...</h3></body></html>");
+      if (novoSSID.length() > 0 && novaSenha.length() > 0) {
+        // Salva as credenciais na NVS (memória não volátil), como ensinado em aula.
+        preferencias.begin("wifi", false);
+        preferencias.putString("ssid", novoSSID);
+        preferencias.putString("password", novaSenha);
+        preferencias.end();
 
-      delay(500); // garante que a resposta HTTP seja enviada antes do reset
-      ESP.restart();
-    } else {
-      request->send(400, "text/plain", "Erro: parametros invalidos");
-    }
-  });
+        request->send(200, "text/html",
+          "<!DOCTYPE html><html><head><meta charset='UTF-8'>"
+          "<link rel='stylesheet' href='/novo_estilo.css'></head>"
+          "<body><h3>Configuracao salva! Reiniciando o ESP32...</h3></body></html>");
+
+        delay(500); // garante que a resposta HTTP seja enviada antes do reset
+        ESP.restart();
+      } else {
+        request->send(400, "text/plain", "Erro: parametros invalidos");
+      }
+    },
+    NULL, // onUpload: não usamos upload de arquivo neste formulário
+    [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+      // onBody: vai acumulando o corpo bruto da requisição POST
+      if (index == 0) g_corpoSave = "";
+      for (size_t i = 0; i < len; i++) {
+        g_corpoSave += (char) data[i];
+      }
+    });
 
   server.serveStatic("/", SPIFFS, "/");
 
